@@ -1,0 +1,232 @@
+R Programming Notes | John Hopkins | Coursera | Week-1
+
+R was developed by statistician working at the University of Auckland.
+A key property of R is that elements of vector all must be of same class.
+
+"Data Types"
+
+Objects 
+Classes of objects are as following: 
+Character, Numeric, Integer, Complex, Logical; also known as - "Atomic-Data-Types"
+
+Creating a vector of objects c() -> For example: 
+Character: x <- c("a", "b", "c") 
+Numeric: x <- c(0.5, 0.6) 
+Logical: x <- c(TRUE, FALSE) and so on...
+
+Vectors 
+Creating vector function -> For example:  
+> x <- vector("numeric", length = 10)
+> x
+ [1] 0 0 0 0 0 0 0 0 0 0
+
+Lists
+Creating list function -> For example:
+> x <- list(2, "a", "b", TRUE)
+> x[(1)]
+[[1]]
+[1] 2
+
+Matrices
+Creating matrix function -> For example:
+> x <- matrix(1:6, 2, 3)
+> x
+     [,1] [,2] [,3]
+[1,]    1    3    5
+[2,]    2    4    6
+
+What is the function of cbinds?
+"cbinds" to treats vectors as if they are coloumn of a matrix. It binds them together coloumn-wise to create a matrix :)
+For example:
+> x <- c(1, 3, 5)
+> y <- c(3, 2, 10)
+> cbind(x, y)
+     x  y
+[1,] 1  3
+[2,] 3  2
+[3,] 5 10
+
+§Subsetting - Lists, Matrices, Partial Matching, Removing NA Values
+
+Subsetting: List, For example:
+> x <- list(foo = 1:4, bar = 0.6, baz = "hello")
+> x[c(1,3)]
+$foo
+[1] 1 2 3 4
+
+$baz
+[1] "hello"
+
+Subsetting: Nested elements of list, For example:
+> x <- list(a = list(10, 12, 14), b = c(3.14, 2.81))
+> x[[(1)]]
+[[1]]
+[1] 10
+
+[[2]]
+[1] 12
+
+[[3]]
+[1] 14
+> x[[(2)]]
+[1] 3.14 2.81
+
+> x[[c(1, 3)]]
+[1] 14
+
+Subsetting: Matrices, For example:
+> x <- matrix(1:6, 2, 3)
+> x
+     [,1] [,2] [,3]
+[1,]    1    3    5
+[2,]    2    4    6
+
+> x [1, 2]
+[1] 3
+
+> x [2, 1]
+[1] 2
+
+Subsetting: Partial Matching allowed with [[ pr $, For example
+> x <- list(aardvark = 1:5)
+> x$a
+[1] 1 2 3 4 5
+> x[["a"]]
+NULL
+> x[["a", exact = FALSE]]
+[1] 1 2 3 4 5
+> 
+
+Subsetting of Removing NA Values, For example
+> x <- c(1, 2, NA, 4, NA, 5)
+> bad <- is.na(x)
+> x[!bad]
+[1] 1 2 4 5
+
+For example:
+> x <- c(1, 2, NA, 4, NA, 5)
+> y <- c("a", "b", NA, "d", NA, "f")
+> good <- complete.cases(x,y)
+> x[good]
+[1] 1 2 4 5
+> y[good]
+[1] "a" "b" "d" "f"
+
+For example:
+> airquality[1:6, ]
+  Ozone Solar.R Wind Temp Month Day
+1    41     190  7.4   67     5   1
+2    36     118  8.0   72     5   2
+3    12     149 12.6   74     5   3
+4    18     313 11.5   62     5   4
+5    NA      NA 14.3   56     5   5
+6    28      NA 14.9   66     5   6
+
+> good <- complete.cases(airquality)
+> airquality[good, ][1:6, ]
+  Ozone Solar.R Wind Temp Month Day
+1    41     190  7.4   67     5   1
+2    36     118  8.0   72     5   2
+3    12     149 12.6   74     5   3
+4    18     313 11.5   62     5   4
+7    23     299  8.6   65     5   7
+8    19      99 13.8   59     5   8
+
+Vectorized Operation 
+Making code more efficient, concise and easy to read, For example:
+> x <- 1:4; y <- 6:9
+> x+y
+[1]  7  9 11 13
+> x > 2
+[1] FALSE FALSE  TRUE  TRUE
+> y == 8
+[1] FALSE FALSE  TRUE FALSE
+> x*y
+[1]  6 14 24 36
+> x/y
+[1] 0.1666667 0.2857143 0.3750000 0.4444444
+
+Vectorized Matrix Operation, For example
+> x <- matrix(1:4, 2, 2); y <- matrix(rep(10, 4), 2, 2)
+> x*y
+     [,1] [,2]
+[1,]   10   30
+[2,]   20   40
+> x/y
+     [,1] [,2]
+[1,]  0.1  0.3
+[2,]  0.2  0.4
+
+$Reading and Writing Data
+>read.table or read.csv
+-data <- read.table("foo.txt")
+
+Or > Reading Large Table
+-initial <- read.table("datatable.txt", nrows = 100)
+> To calculate size - 8byte for a numeric
+
+"How to read csv and extract relevant information by using R" (#csv file is attached)
+#Column names of the dataset
+dat <- read.csv("hw1_data.csv")
+> names(dat)
+Output
+[1] "Ozone"   "Solar.R" "Wind"    "Temp"    "Month"   "Day"
+
+#Extract the first 2 rows of the data frame
+> dat[1:2,] Or > head(dat, 2)
+Output
+  Ozone Solar.R Wind Temp Month Day
+1    41     190  7.4   67     5   1
+2    36     118  8.0   72     5   2
+
+#Extract the last 2 rows of the data frame
+> dat[152:153, ] Or > tail(dat, 2)
+Output
+    Ozone Solar.R Wind Temp Month Day
+152    18     131  8.0   76     9  29
+153    20     223 11.5   68     9  30
+
+#Number of observations i.e. rows
+> nrow(dat)
+Output
+[1] 153
+
+#Number of observations i.e. columns
+> ncol(dat)
+Output
+[1] 6
+
+#Value of Ozone in the 47th row (Hint: $ notation is useful)
+> dat$Ozone[47]
+Output
+[1] 21
+
+#Sum of Missing Values in Ozone Column
+> sum(is.na(dat$Ozone))
+Output
+[1] 37
+
+#Mean of the Ozone Column (Note: mean after removing na values)
+> mean(dat$Ozone, na.rm=TRUE)
+Output
+[1] 42.12931
+
+#Mean of "Temp" when "Month" is equal to 6 
+> mean(dat[which(dat$Month == 6), ]$Temp)
+Output
+[1] 79.1
+
+#Maximum of "Ozone" when "Month" is equal to 5 
+> max(dat[which(dat$Month == 5), ]$Ozone, na.rm =TRUE)
+Output
+[1] 115
+
+#Minimum of "Ozone" when "Month" is equal to 5
+> min(dat[which(dat$Month == 5), ]$Ozone, na.rm =TRUE)
+Output
+[1] 1
+
+#Mean of Solar.R subset where "Ozone" values are above 31 and "Temp" values are above 90
+> mean(dat[which(dat$Ozone >31 & dat$Temp > 90),]$Solar.R)
+Output
+[1] 212.8
