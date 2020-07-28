@@ -1,0 +1,269 @@
+R Programming Notes | John Hopkins | Coursera | Week-3
+
+>Loop Functions
+
+lapply: Loop over list, For example:
+> x <- list(a= 1:4, b=rnorm(10), c=rnorm(20, 1), d=rnorm(100, 5))
+> lapply(x, mean)
+$a
+[1] 2.5
+
+$b
+[1] -0.06251101
+
+$c
+[1] 0.8875995
+
+$d
+[1] 4.979621
+
+sapply: same as lapply but try to simplify the result, For example:
+> x <- list(a= 1:4, b=rnorm(10), c=rnorm(20, 1), d=rnorm(100, 5))
+> lapply(x, mean)
+$a
+[1] 2.5
+
+$b
+[1] -0.5168366
+
+$c
+[1] 0.7656679
+
+$d
+[1] 5.007262
+
+> sapply(x, mean)
+         a          b          c          d 
+ 2.5000000 -0.5168366  0.7656679  5.0072618 
+
+apply: Evaluate a function over margin of an array, For example:
+> x <- matrix(rnorm(200), 20, 10)
+> apply(x, 2, mean)
+ [1] -0.18382091 -0.03423418  0.11106901  0.08303621  0.07363247 -0.03078846
+ [7] -0.01018178 -0.21368080 -0.00551966 -0.36363371
+
+> apply(x, 1, sum)
+ [1] -2.5607933  2.7416352  1.0505377  2.9448146  0.8586937 -1.9014430
+ [7] -0.9772733 -3.2556800 -2.2936962 -0.5541097  7.2368610 -1.8198340
+[13]  1.2370459 -4.0352954 -3.1031228 -5.0819527  0.3432787 -2.7255570
+[19] -1.5981811  2.0116358
+
+**col/row sum and means**
+
+rowSums = apply(x, 1, sum)
+rowMeans = apply(x, 1, mean)
+colSums = apply(x, 2, sum)
+colMeans = apply(x, 1, mean)
+
+average matrix in an arry, For example:
+> a <- array(rnorm(2*2*10), c(2, 2, 10))
+> apply(a, c(1, 2), mean)
+          [,1]       [,2]
+[1,] 0.4581978 -0.3963695
+[2,] 0.1161055  0.1888834
+
+mapply: multivariate version of lapply or applies a function in parallel over a set of arguments, For example:
+> list(rep(1, 4), rep(2, 3), rep(3, 2), rep(4, 1)) 
+OR
+> mapply(rep, 1:4, 4:1)
+[[1]]
+[1] 1 1 1 1
+
+[[2]]
+[1] 2 2 2
+
+[[3]]
+[1] 3 3
+
+[[4]]
+[1] 4
+
+vectorized a function, For example:
+> noise <- function(n, mean, sd) {
++ rnorm(n, mean, sd)
++ }
+> noise(5, 1, 2)
+[1]  4.4605901  2.3951223 -0.9898825  4.1918426 -0.7803879
+
+> noise(1:5, 1:5, 2)
+[1] 2.477403 5.110990 3.815548 4.460836 4.456495
+
+instant Vectorization, For example:
+> mapply(noise, 1:5, 1:5, 2)
+[[1]]
+[1] 1.654626
+
+[[2]]
+[1] 2.053782 3.241073
+
+[[3]]
+[1] 4.081081 1.394447 3.209561
+
+[[4]]
+[1] -0.5833353  5.3113384  6.2245246  8.2779517
+
+[[5]]
+[1] 6.958192 5.789292 7.008258 3.442609 3.498419
+
+tapply: Use to apply over subsets of a vector
+take group mean, For example:
+> x <- c(rnorm(10), runif(10), rnorm(10, 1))
+> f <- gl(3, 10)
+> f
+ [1] 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3
+Levels: 1 2 3
+> tapply(x, f, mean)
+         1          2          3 
+-0.1036227  0.4252277  0.3702497 
+
+take group means without simplifications, For example:
+> tapply(x, f, mean, simplify = FALSE)
+$`1`
+[1] -0.1036227
+
+$`2`
+[1] 0.4252277
+
+$`3`
+[1] 0.3702497
+
+find group range, For example:
+> tapply(x, f, range)
+$`1`
+[1] -1.449958  1.334162
+
+$`2`
+[1] 0.004196618 0.995438217
+
+$`3`
+[1] -1.286221  1.814457
+
+split: It takes a vector and splits it into groups determined by a factor or list of factors, For example:
+> x <- c(rnorm(10), runif(10), rnorm(10, 1))
+> f <- gl(3, 10)
+> split(x, f)
+$`1`
+ [1]  1.4787291  0.7431716 -0.6264471 -0.4861904 -0.1768556  0.4838714
+ [7] -0.2249944  0.2161191  0.4546528 -1.3748393
+
+$`2`
+ [1] 0.3889371 0.9518501 0.6975804 0.8998183 0.2053502 0.6156766 0.5658245
+ [8] 0.2602922 0.5922601 0.4993360
+
+$`3`
+ [1]  2.4587640  1.3300549  0.5608784 -0.1243619  1.4952608 -0.3914985
+ [7]  1.2612503 -0.1861491  1.0303791  0.2865402
+
+common idiom is slipt followed by an lapply, For example:
+> lapply(split(x, f), mean)
+$`1`
+[1] 0.04872172
+
+$`2`
+[1] 0.5676926
+
+$`3`
+[1] 0.7721118
+
+Debugging Tools - Diagnosing the Problem
+The primary tool in debugging functions in R are:
+tracebac:  prints out the function call stack after an error occur or (gives a most recent error)
+debug: flags a function for debug mode which allows you to step through execution of a function one line at a time
+browser: suspends the execution of a function wherever it called and put the function in debug mode
+trace: allows you to insert debugging code into a function a specific places
+recover: allows you to modify the error behavior so that you can browse the function call stack
+
+§Quiz-Week-3
+
+#1 In this dataset, what is the mean of ‘Sepal.Length’ for the species virginica? Please round your answer to the nearest whole number.
+
+> library(datasets)
+> data(iris)
+> round(mean(iris[which(iris$Species == "virginica"),]$Sepal.Length))
+[1] 7
+
+#2 What R code returns a vector of the means of the variables ‘Sepal.Length’, ‘Sepal.Width’, ‘Petal.Length’, and ‘Petal.Width’?
+
+> apply(iris[, 1:4], 2, mean)
+Sepal.Length  Sepal.Width Petal.Length  Petal.Width 
+    5.843333     3.057333     3.758000     1.199333 
+
+#3 Load the ‘mtcars’ dataset in R with the following code, 
+How can one calculate the average miles per gallon (mpg) by number of cylinders in the car (cyl)?
+
+> library(datasets)
+> data(mtcars)
+> with(mtcars, tapply(mpg, cyl, mean))
+       4        6        8 
+26.66364 19.74286 15.10000 
+
+> library(datasets)
+> data(mtcars)
+> sapply(split(mtcars$mpg, mtcars$cyl), mean)
+       4        6        8 
+26.66364 19.74286 15.10000 
+
+> library(datasets)
+> data(mtcars)
+> tapply(mtcars$mpg, mtcars$cyl, mean)
+       4        6        8 
+26.66364 19.74286 15.10000 
+
+#4 Continuing with the ‘mtcars’ dataset from the previous Question,
+what is the absolute difference between the average horsepower of 4-cylinder cars and the average horsepower of 8-cylinder cars?
+
+> new <- tapply(mtcars$hp, mtcars$cyl, mean)
+> round(abs(new[3]-new[1]))
+  8 
+127
+
+#5  If you run debug(ls) What happens when you next call the ‘ls’ function?
+
+Execution of ‘ls’ will suspend at the beginning of the function and you will be in the browser.
+
+§Programming Assignment 2
+
+Caching the Inverse of a Matrix
+
+Matrix inversion is usually a costly computation and there may be some benefit to caching the inverse of a matrix rather than compute it repeatedly .
+
+Write the following functions:
+
+1. makeCacheMatrix and 2. cacheSolve:
+
+********************************************************************************************************************************************************
+
+1. makeCacheMatrix: This function creates a special “matrix” object that can cache its inverse.
+
+makeCacheMatrix <- function(x = matrix()) {
+  inv <- NULL
+  set <- function(y){
+    x <<- y
+    inv <<- NULL
+  }
+  get <- function() x
+  setInverse <- function(solveMatrix) inv <<- solveMatrix
+  getInverse <- function() inv
+  list(set = set, get = get, setInverse = setInverse, getInverse = getInverse)
+}
+
+********************************************************************************************************************************************************
+
+2. cacheSolve: This function computes the inverse of the special “matrix” returned by makeCacheMatrix above. If the inverse has already been calculated 
+(and the matrix has not changed), then the cachesolve should retrieve the inverse from the cache. 
+
+For example: 
+if X is a square invertible matrix, then solve(X) returns its inverse.
+
+cacheSolve <- function(x, ...) {
+  ## Return a matrix that is the inverse of 'x'
+  inv <- x$getInverse()
+  if(!is.null(inv)){
+    message("getting cached data")
+    return(inv)
+  }
+  data <- x$get()
+  inv <- solve(data)
+  x$setInverse(inv)
+  inv      
+}
