@@ -1,0 +1,406 @@
+R Programming Notes | John Hopkins | Coursera | Week-4
+
+>Simulations and Profiling
+
+str (Whats in this object) For example:
+> m <- matrix(rnorm(100), 10, 10)
+> str(m)
+ num [1:10, 1:10] -1.273 0.47 0.885 -0.488 0.392 ...
+
+For example:
+> s <- split(airquality, airquality$Month)
+> str(s)
+List of 5
+ $ 5:'data.frame':      31 obs. of  6 variables:
+  ..$ Ozone  : int [1:31] 41 36 12 18 NA 28 23 19 8 NA ...
+  ..$ Solar.R: int [1:31] 190 118 149 313 NA NA 299 99 19 194 ...
+  ..$ Wind   : num [1:31] 7.4 8 12.6 11.5 14.3 14.9 8.6 13.8 20.1 8.6 ...
+  ..$ Temp   : int [1:31] 67 72 74 62 56 66 65 59 61 69 ...
+  ..$ Month  : int [1:31] 5 5 5 5 5 5 5 5 5 5 ...
+  ..$ Day    : int [1:31] 1 2 3 4 5 6 7 8 9 10 ...
+
+Generating Random Numbers
+Probability distribution functions usually have four functions associtated with them.
+d for density
+r for random numbers generation
+p for cumulative distribution
+q for quantile function
+
+dnorm(x, mean = 0, sd = 1, log = FALSE)
+pnorm(q, mean = 0, sd = 1, lower.tail = TRUE, log.p = FALSE)
+qnorm(p, mean = 0, sd = 1, lower.tail = TRUE, log.p = FALSE)
+rnorm(n, mean = 0, sd = 1)
+
+For example:
+> x <- rnorm(10)
+> x
+ [1] -1.3577796 -0.0957917  0.4455251  0.1104086  0.4738934  1.1091277
+ [7] -0.3640153 -0.5088300  1.4535681  2.2264631
+
+For example:
+> x <- rnorm(10, 20, 2)
+> x
+ [1] 17.14332 19.37889 22.94141 20.99134 18.21336 19.87448 23.00426 18.13343
+ [9] 20.94628 20.41476
+> summary(x)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  17.14   18.50   20.14   20.10   20.98   23.00 
+
+Setting the random number seed with set.seed ensures reproducibilty, For example:
+> set.seed(1)
+> x <- rnorm(5)
+> x
+[1] -0.6264538  0.1836433 -0.8356286  1.5952808  0.3295078
+> x <- rnorm(5)
+> x
+[1] -0.8204684  0.4874291  0.7383247  0.5757814 -0.3053884
+> set.seed(1)
+> x <- rnorm(5)
+> x
+[1] -0.6264538  0.1836433 -0.8356286  1.5952808  0.3295078
+
+Generating Poisson Data, For example:
+> rpois(10, 1)
+ [1] 0 0 1 1 2 1 1 4 1 2
+> rpois(10, 2)
+ [1] 4 1 2 0 1 1 0 1 4 1
+> rpois(10, 20)
+ [1] 19 19 24 23 22 24 23 20 11 22
+
+Cumulative Distribution, For example:
+> ppois(2, 2)
+[1] 0.6766764
+> ppois(4, 2)
+[1] 0.947347
+> ppois(6, 2)
+[1] 0.9954662
+
+Generating Random Numbers from Generalized Linear Model
+Lets suppose we want to simulate from a Poisson Model when
+
+Y ~ Poisson(meu)
+log(mu) =  β0 + β1*x where β0 = 0.5 and β1 = 0.3. Use rpois function for this 
+
+> set.seed(1)
+> x <-  rnorm(100)
+> log.mu <- 0.5 + 0.3*x
+> y <- rpois(100, exp(log.mu))
+> summary(y)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00    1.00    1.00    1.55    2.00    6.00 
+> plot(x, y)
+
+Random Sampling, For example:
+> set.seed(1)
+> sample(1:10, 4)
+[1] 9 4 7 1
+> sample(letters, 4)
+[1] "b" "w" "k" "n"
+> sample(1:10)
+ [1]  2  3  1  5  7 10  6  4  9  8
+> sample(1:10, replace = TRUE)
+ [1]  9  5  5  9  9  5  5  2 10  9
+> sample(1:10, replace = FALSE)
+ [1]  1  4  3  6  2  7  5  8  9 10
+
+Using system.time(), For example:
+> system.time(readLines("http://www.jhsph.edu"))
+   user  system elapsed 
+   0.13    0.09    2.78 
+
+R-Profiler
+Rprof()
+summaryRprof()
+by.total
+by.self(computation)
+
+§Quiz-Week-4
+
+#1  What is produced at the end of this snippet of R code?
+> set.seed(1)
+> rpois(5, 2)
+Output
+[1] 1 1 2 4 1
+A vector with the numbers 1, 1, 2, 4, 1
+
+#2 What R function can be used to generate standard Normal random variables?
+rnorm
+
+#3  When simulating data, why is using the set.seed() function important?
+It ensures that the sequence of random numbers starts in a specific place and is therefore reproducible.
+
+#4 Which function can be used to evaluate the inverse cumulative distribution function for the Poisson distribution?
+qpois
+
+#5 What does the following code do?
+> set.seed(1)
+> x <- rep(0:1, each = 5)
+> e <- rnorm(10, 0, 20)
+> y <- 0.5 + 2*x + e
+Generate data from a Normal linear model
+
+#6 What R function can be used to generate Binomial random variables?
+rbinom
+
+#7 What aspect of the R runtime does the profiler keep track of when an R expression is evaluated?
+The function call stack
+
+#8 Consider the following R code
+library(datasets) 
+Rprof() 
+fit <- lm(y ~ x1 + x2) 
+Rprof(NULL)
+
+Assume that y, x1, and x2 are present in the workspace.) Without running the code, 
+what percentage of the run time is spent in the lm function, based on the by.total method of normalization shown in summaryRprof()?
+
+100%
+
+#9 When using system.time(), what is the user time?
+It is the time spent by the CPU evaluating an expression
+
+#10 If a computer has more than one available processor and R is able to take advantage of that, then which of the following is true when using system.time()?
+Elapsed time may be smaller than user time
+
+§Programming Assignment 3
+
+***************************************************************************************************************************
+30-day mortality rates plot for heart attack
+
+> setwd("C:/Users/User/Desktop/Coursera/rprog_data_ProgAssignment3-data")
+> outcome <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
+> outcome[, 11] <- as.numeric(outcome[, 11])
+Warning message:
+NAs introduced by coercion 
+> hist(outcome[, 11])
+
+***************************************************************************************************************************
+Finding the best hospital in a state
+
+best.R
+
+#Define a path to read the data from your system
+rm(list = ls())
+setwd("C:/Users/User/Desktop/Coursera/rprog_data_ProgAssignment3-data")
+
+#Define a path of a directory to read csv files
+directory <- "./outcome-of-care-measures.csv"
+
+#Create a function that signifies the best hospital in a state
+best <- function(state, outcome) {
+
+#Validate the outcome string
+outcomes = c("heart attack", "heart failure", "pneumonia")
+if(outcome %in% outcomes == FALSE) stop("invalid outcome")
+
+#Read the outcome data
+data <- read.csv(directory, colClasses = "character")
+
+#Simplify and filter the column names
+data <- data[c(2, 7, 11, 17, 23)]
+names(data)[1] <- "name"
+names(data)[2] <- "state"
+names(data)[3] <- "heart attack"
+names(data)[4] <- "heart failure"
+names(data)[5] <- "pneumonia"
+
+#Validate the state string
+states <- data[, 2]
+states <- unique(states)
+if(state %in% states == FALSE ) stop("invalid state")
+
+#Select only rows with state values of interest	
+data <- data[data$state==state & data[outcome] != 'Not Available', ]
+vals <- data[, outcome]
+rowNum <- which.min(vals)
+
+#Return the name of hospital in that state with lowest 30-day death rate
+data[rowNum, ]$name
+}
+
+***************************************************************************************************************************
+
+#1 What result is returned by the following code?
+> best("SC", "heart attack")
+Output
+[1] "MUSC MEDICAL CENTER"
+
+#2 What result is returned by the following code?
+> best("NY", "pneumonia")
+Output
+[1] "MAIMONIDES MEDICAL CENTER"
+
+#3 What result is returned by the following code?
+> best("AK", "pneumonia")
+Output
+[1] "YUKON KUSKOKWIM DELTA REG HOSPITAL"
+
+***************************************************************************************************************************
+Finding the ranking hospitals by outcome in a state
+
+rankhospital.R
+
+#Define a path to read the data from your system
+rm(list = ls())
+setwd("C:/Users/User/Desktop/Coursera/rprog_data_ProgAssignment3-data")
+
+#Define a path of a directory to read csv files
+directory <- "./outcome-of-care-measures.csv"
+
+#Create a function that signifies ranking hospitals by outcome in a state
+rankhospital <- function(state, outcome, num) {
+
+#Read outcome data
+data <- read.csv(directory, colClasses = "character")
+
+#Simplify and filter the column names
+data <- data[c(2, 7, 11, 17, 23)]
+names(data)[1] <- "name"
+names(data)[2] <- "state"
+names(data)[3] <- "heart attack"
+names(data)[4] <- "heart failure"
+names(data)[5] <- "pneumonia"
+
+#Validate the outcome string
+outcomes = c("heart attack", "heart failure", "pneumonia")
+if(outcome %in% outcomes == FALSE) stop("invalid outcome")
+
+#Validate the state string
+states <- data[, 2]
+states <- unique(states)
+if(state %in% states == FALSE) stop("invalid state")
+    
+#Validate the num value
+if(num != "best" && num != "worst" && num%%1 != 0) stop("invalid num")
+
+#Select only rows with state values of interest	   
+data <- data[data$state==state & data[outcome] != 'Not Available', ]
+
+#Order the data
+data[outcome] <- as.data.frame(sapply(data[outcome], as.numeric))
+data <- data[order(data$name, decreasing = FALSE), ]
+data <- data[order(data[outcome], decreasing = FALSE), ]
+
+#Process the num argument
+vals <- data[, outcome]
+if(num == "best") {
+rowNum <- which.min(vals)
+} else if(num == "worst") {
+rowNum <- which.max(vals)
+} else {
+rowNum <- num
+}
+
+#Return the name of hospital in that state with lowest 30-day death rate
+data[rowNum, ]$name
+}
+
+***************************************************************************************************************************
+
+#4 What result is returned by the following code?
+> rankhospital("NC", "heart attack", "worst")
+Output
+[1] "WAYNE MEMORIAL HOSPITAL"
+
+#5 What result is returned by the following code?
+> rankhospital("WA", "heart attack", 7)
+Output
+[1] "YAKIMA VALLEY MEMORIAL HOSPITAL"
+
+#6 What result is returned by the following code?
+> rankhospital("TX", "pneumonia", 10)
+Output
+[1] "SETON SMITHVILLE REGIONAL HOSPITAL"
+
+#7 What result is returned by the following code?
+> rankhospital("NY", "heart attack", 7)
+Output
+[1] "BELLEVUE HOSPITAL CENTER"
+
+***************************************************************************************************************************
+Ranking hospitals in all states
+
+rankall.R
+
+#Define a path to read the data from your system
+rm(list = ls())
+setwd("C:/Users/User/Desktop/Coursera/rprog_data_ProgAssignment3-data")
+
+#Define a path of a directory to read csv files
+directory <- "./outcome-of-care-measures.csv"
+
+#Create a function that signifies ranking hospitals in all states
+rankall <- function(outcome, num = "best") {
+
+#Read outcome data
+data <- read.csv(directory, colClasses = "character")
+
+#Simplify the column names
+data <- data[c(2, 7, 11, 17, 23)]
+names(data)[1] <- "name"
+names(data)[2] <- "state"
+names(data)[3] <- "heart attack"
+names(data)[4] <- "heart failure"
+names(data)[5] <- "pneumonia"
+
+#Validate the outcome string
+outcomes = c("heart attack", "heart failure", "pneumonia")
+if(outcome %in% outcomes == FALSE) stop("invalid outcome")
+
+#Validate the num value
+if(num != "best" && num != "worst" && num%%1 != 0) stop("invalid num")
+
+#Select only rows with outcome data	
+data <- data[data[outcome] != 'Not Available', ]
+    
+#Order the data
+data[outcome] <- as.data.frame(sapply(data[outcome], as.numeric))
+data <- data[order(data$name, decreasing = FALSE), ]
+data <- data[order(data[outcome], decreasing = FALSE), ]
+
+#Define a function to process the num argument
+getHospByRank <- function(df, s, n) {
+df <- df[df$state==s, ]
+vals <- df[, outcome]
+if( n == "best" ) {
+rowNum <- which.min(vals)
+} else if(n == "worst") {
+rowNum <- which.max(vals)
+} else {
+rowNum <- n
+}
+df[rowNum, ]$name
+}
+
+#Find the hospital of the given rank in each state
+states <- data[, 2]
+states <- unique(states)
+newdata <- data.frame("hospital"=character(), "state"=character())
+for(st in states) {
+hosp <- getHospByRank(data, st, num)
+newdata <- rbind(newdata, data.frame(hospital=hosp, state=st))
+}
+
+#Return the hospital names and the state name abbreviated
+newdata <- newdata[order(newdata['state'], decreasing = FALSE), ]
+newdata
+}
+
+***************************************************************************************************************************
+
+#9 What result is returned by the following code?
+> r <- rankall("heart attack", 4)
+> as.character(subset(r, state == "HI")$hospital)
+Output
+[1] "CASTLE MEDICAL CENTER"
+
+#10 What result is returned by the following code?
+> r <- rankall("pneumonia", "worst")
+> as.character(subset(r, state == "NJ")$hospital)
+Output
+[1] "BERGEN REGIONAL MEDICAL CENTER"
+
+#11 What result is returned by the following code?
+> r <- rankall("heart failure", 10)
+> as.character(subset(r, state == "NV")$hospital)
+[1] "RENOWN SOUTH MEADOWS MEDICAL CENTER"
