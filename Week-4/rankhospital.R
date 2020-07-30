@@ -2,10 +2,6 @@
 rm(list = ls())
 setwd("C:/Users/User/Desktop/Coursera/rprog_data_ProgAssignment3-data")
 
-#Define a path to read the data from your system
-rm(list = ls())
-setwd("C:/Users/User/Desktop/Coursera/rprog_data_ProgAssignment3-data")
-
 #Define a path of a directory to read csv files
 directory <- "./outcome-of-care-measures.csv"
 
